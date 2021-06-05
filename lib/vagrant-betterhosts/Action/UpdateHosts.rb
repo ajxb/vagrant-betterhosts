@@ -1,10 +1,10 @@
 module VagrantPlugins
-  module GoodHosts
+  module BetterHosts
     module Action
       class UpdateHosts < BaseAction
 
         def run(env)
-          @ui.info "[vagrant-goodhosts] Checking for host entries"
+          @ui.info "[vagrant-betterhosts] Checking for host entries"
           addHostEntries()
         end
 

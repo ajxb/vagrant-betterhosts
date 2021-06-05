@@ -1,8 +1,8 @@
 module VagrantPlugins
-  module GoodHosts
+  module BetterHosts
     module Action
       class BaseAction
-        include GoodHosts
+        include BetterHosts
 
         # Vagrant 2.2.14 has changed the hooks execution policy so they
         # started to be triggered more than once (a lot actually) which

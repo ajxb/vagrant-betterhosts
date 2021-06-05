@@ -2,27 +2,27 @@ require "rbconfig"
 require "open3"
 
 module VagrantPlugins
-  module GoodHosts
-    module GoodHosts
+  module BetterHosts
+    module BetterHosts
       def getIps
         ips = []
 
         if @machine.config.vm.networks.length == 0
-            @ui.error("[vagrant-goodhosts] No ip address found for this virtual machine")
+            @ui.error("[vagrant-betterhosts] No ip address found for this virtual machine")
             exit
         end
         
         @machine.config.vm.networks.each do |network|
           key, options = network[0], network[1]
-          ip = options[:ip] if (key == :private_network || key == :public_network) && options[:goodhosts] != "skip"
+          ip = options[:ip] if (key == :private_network || key == :public_network) && options[:betterhosts] != "skip"
           ips.push(ip) if ip
-          if options[:goodhosts] == "skip"
-            @ui.info '[vagrant-goodhosts] Skipped adding host entries (config.vm.network goodhosts: "skip" is set)'
+          if options[:betterhosts] == "skip"
+            @ui.info '[vagrant-betterhosts] Skipped adding host entries (config.vm.network betterhosts: "skip" is set)'
           end
 
           @machine.config.vm.provider :hyperv do |v|
             timeout = @machine.provider_config.ip_address_timeout
-            @ui.output("[vagrant-goodhosts] Waiting for the guest machine to report its IP address ( this might take some time, have patience )...")
+            @ui.output("[vagrant-betterhosts] Waiting for the guest machine to report its IP address ( this might take some time, have patience )...")
             @ui.detail("Timeout: #{timeout} seconds")
 
             options = {
@@ -59,7 +59,7 @@ module VagrantPlugins
 
       def get_cli
         binary = get_os_binary
-        path = File.expand_path(File.dirname(File.dirname(__FILE__))) + "/vagrant-goodhosts/bundle/"
+        path = File.expand_path(File.dirname(File.dirname(__FILE__))) + "/vagrant-betterhosts/bundle/"
         path = "#{path}#{binary}"
 
         return path
@@ -69,15 +69,15 @@ module VagrantPlugins
       def getHostnames(ips)
         hostnames = Hash.new { |h, k| h[k] = [] }
 
-        case @machine.config.goodhosts.aliases
+        case @machine.config.betterhosts.aliases
         when Array
           # simple list of aliases to link to all ips
           ips.each do |ip|
-            hostnames[ip] += @machine.config.goodhosts.aliases
+            hostnames[ip] += @machine.config.betterhosts.aliases
           end
         when Hash
           # complex definition of aliases for various ips
-          @machine.config.goodhosts.aliases.each do |ip, hosts|
+          @machine.config.betterhosts.aliases.each do |ip, hosts|
             hostnames[ip] += Array(hosts)
           end
         end
@@ -87,7 +87,7 @@ module VagrantPlugins
       
       def disableClean(ip_address)
         unless ip_address.nil?
-          return @machine.config.goodhosts.disable_clean
+          return @machine.config.betterhosts.disable_clean
         end
         return true
       end
@@ -102,7 +102,7 @@ module VagrantPlugins
 
         hostnames_by_ips.each do |ip_address, hostnames|
           if ip_address.nil?
-            @ui.error "[vagrant-goodhosts] Error adding some hosts, no IP was provided for the following hostnames: #{hostnames}"
+            @ui.error "[vagrant-betterhosts] Error adding some hosts, no IP was provided for the following hostnames: #{hostnames}"
             next
           end
           if cli.include? ".exe"
@@ -136,7 +136,7 @@ module VagrantPlugins
 
         hostnames_by_ips.each do |ip_address, hostnames|
           if ip_address.nil?
-            @ui.error "[vagrant-goodhosts] Error adding some hosts, no IP was provided for the following hostnames: #{hostnames}"
+            @ui.error "[vagrant-betterhosts] Error adding some hosts, no IP was provided for the following hostnames: #{hostnames}"
             next
           end
           if cli.include? ".exe"
@@ -163,13 +163,13 @@ module VagrantPlugins
       def printReadme(error, errorText)
         if error
           cli = get_cli
-          @ui.error "[vagrant-goodhosts] Issue executing goodhosts CLI: #{errorText}"
-          @ui.error "[vagrant-goodhosts] Cli path: #{cli}"
+          @ui.error "[vagrant-betterhosts] Issue executing goodhosts CLI: #{errorText}"
+          @ui.error "[vagrant-betterhosts] Cli path: #{cli}"
           if cli.include? ".exe"
-            @ui.error "[vagrant-goodhosts] Check the readme at https://github.com/goodhosts/vagrant#windows-uac-prompt"
+            @ui.error "[vagrant-betterhosts] Check the readme at https://github.com/ajxb/vagrant-betterhosts#windows-uac-prompt"
             exit
           else
-            @ui.error "[vagrant-goodhosts] Check the readme at https://github.com/goodhosts/vagrant#passwordless-sudo"
+            @ui.error "[vagrant-betterhosts] Check the readme at https://github.com/ajxb/vagrant-betterhosts#passwordless-sudo"
           end
         end
       end
@@ -187,7 +187,7 @@ module VagrantPlugins
             if hostnames[ip].count() > 0
               hostnames[ip].each do |hostname|
                 if !ip_address.nil?
-                  @ui.info "[vagrant-goodhosts] - found entry for: #{ip_address} #{hostname}"
+                  @ui.info "[vagrant-betterhosts] - found entry for: #{ip_address} #{hostname}"
                 end
               end
               hostnames_by_ips = { ip_address => hostnames[ip].join(" ") }
@@ -198,7 +198,7 @@ module VagrantPlugins
           if hostnames[ip_address].count() > 0
             hostnames[ip_address].each do |hostname|
               if !ip_address.nil?
-                @ui.info "[vagrant-goodhosts] - found entry for: #{ip_address} #{hostname}"
+                @ui.info "[vagrant-betterhosts] - found entry for: #{ip_address} #{hostname}"
               end
             end
             hostnames_by_ips = { ip_address => hostnames[ip_address].join(" ") }

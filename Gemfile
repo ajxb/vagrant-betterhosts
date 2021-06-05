@@ -5,5 +5,5 @@ group :development do
 end
 
 group :plugins do
-  gem "vagrant-goodhosts", path: "."
+  gem "vagrant-betterhosts", path: "."
 end
