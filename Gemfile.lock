@@ -28,7 +28,7 @@ GIT
 PATH
   remote: .
   specs:
-    vagrant-betterhosts (1.0.0)
+    vagrant-betterhosts (0.1.0)
 
 GEM
   remote: https://rubygems.org/
