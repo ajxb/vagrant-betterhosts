@@ -71,10 +71,7 @@ module VagrantPlugins
 
         case @machine.config.betterhosts.aliases
         when Array
-          # simple list of aliases to link to all ips
-          ips.each do |ip|
-            hostnames[ip] += @machine.config.betterhosts.aliases
-          end
+          hostnames[ips[0]] += @machine.config.betterhosts.aliases
         when Hash
           # complex definition of aliases for various ips
           @machine.config.betterhosts.aliases.each do |ip, hosts|
@@ -82,9 +79,16 @@ module VagrantPlugins
           end
         end
 
-        return hostnames
+        # handle default hostname(s) if not already specified in the aliases
+        Array(@machine.config.vm.hostname).each do |host|
+          next unless hostnames.none? { |_, v| v.include?(host) }
+
+          hostnames[ips[0]].unshift host
+        end
+
+        hostnames
       end
-      
+
       def disableClean(ip_address)
         unless ip_address.nil?
           return @machine.config.betterhosts.disable_clean
@@ -105,6 +109,7 @@ module VagrantPlugins
             @ui.error "[vagrant-betterhosts] Error adding some hosts, no IP was provided for the following hostnames: #{hostnames}"
             next
           end
+          @ui.info "[vagrant-betterhosts] Adding #{hostnames} for address #{ip_address}"
           if cli.include? ".exe"
             clean = "\"--clean\","
             if disableClean(ip_address)
@@ -175,37 +180,16 @@ module VagrantPlugins
       end
 
       def generateHostnamesByIps()
-        hostnames_by_ips = []
         ips = getIps
-        if ips.count() < 1
-          return hostnames_by_ips
-        end
+        return [] unless ips.any?
+
+        hostnames_by_ips = {}
         hostnames = getHostnames(ips)
-        if ips.count() > 1
-          ips.each do |ip|
-            ip_address = ip
-            if hostnames[ip].count() > 0
-              hostnames[ip].each do |hostname|
-                if !ip_address.nil?
-                  @ui.info "[vagrant-betterhosts] - found entry for: #{ip_address} #{hostname}"
-                end
-              end
-              hostnames_by_ips = { ip_address => hostnames[ip].join(" ") }
-            end
-          end
-        else
-          ip_address = ips[0]
-          if hostnames[ip_address].count() > 0
-            hostnames[ip_address].each do |hostname|
-              if !ip_address.nil?
-                @ui.info "[vagrant-betterhosts] - found entry for: #{ip_address} #{hostname}"
-              end
-            end
-            hostnames_by_ips = { ip_address => hostnames[ip_address].join(" ") }
-          end
+        ips.each do |ip|
+          hostnames_by_ips[ip] = hostnames[ip].join(' ') if hostnames[ip].any?
         end
 
-        return hostnames_by_ips
+        hostnames_by_ips
       end
     end
   end
