@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://github.com/ajxb/vagrant-betterhosts'
   s.license       = 'MIT'
 
-  s.required_ruby_version = "~> 2.5", "< 2.8"
+  s.required_ruby_version     = ">= 2.5", "< 3.1"
   s.files                 = `git ls-files`.split($/)
   s.files                += Dir.glob("lib/vagrant-betterhosts/bundle/*")
   s.executables           = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
