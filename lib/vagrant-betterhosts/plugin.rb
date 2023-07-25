@@ -5,6 +5,7 @@ require_relative "Action/RemoveHosts"
 
 module VagrantPlugins
   module BetterHosts
+    # Various Vagrant hooks
     class Plugin < Vagrant.plugin('2')
       name 'BetterHosts'
       description <<-DESC
@@ -21,20 +22,24 @@ module VagrantPlugins
         hook.append(Action::UpdateHosts)
       end
 
+      action_hook(:betterhosts, :machine_action_boot) do |hook|
+        hook.append(Action::UpdateHosts)
+      end
+
       action_hook(:betterhosts, :machine_action_provision) do |hook|
         hook.before(Vagrant::Action::Builtin::Provision, Action::UpdateHosts)
       end
 
       action_hook(:betterhosts, :machine_action_halt) do |hook|
-        hook.append(Action::RemoveHosts)
+        hook.prepend(Action::RemoveHosts)
       end
 
       action_hook(:betterhosts, :machine_action_suspend) do |hook|
-        hook.append(Action::RemoveHosts)
+        hook.prepend(Action::RemoveHosts)
       end
 
       action_hook(:betterhosts, :machine_action_destroy) do |hook|
-        hook.append(Action::RemoveHosts)
+        hook.prepend(Action::RemoveHosts)
       end
 
       action_hook(:betterhosts, :machine_action_reload) do |hook|

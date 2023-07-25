@@ -1,5 +1,5 @@
 module VagrantPlugins
   module BetterHosts
-    VERSION = '0.2.1'
+    VERSION = '1.1.6'
   end
 end

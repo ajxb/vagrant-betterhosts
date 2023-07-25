@@ -91,20 +91,25 @@ This enable `vagrant-betterhosts` from running the clean command in every call.
 ## Suppressing prompts for elevating privileges
 
 These prompts exist to prevent anything that is being run by the user from inadvertently updating the hosts file.
+The command path is printed in red when there are errors with Vagrant eg. if the sudo password is entered incorrectly for 3 times.  
 If you understand the risks that go with supressing them, here's how to do it.
 
 ### Linux/OS X: Passwordless sudo
 
-To allow vagrant to automatically update the hosts file without asking for a sudo password, add one of the following snippets to a new sudoers file include, i.e. `sudo visudo -f /etc/sudoers.d/vagrant_betterhosts`.
-The command path is printed when there are errors with sudo.
+To allow vagrant to automatically update the hosts file without asking for a sudo password, add one of the following snippets to a new sudoers file include, i.e. `sudo visudo -f /etc/sudoers.d/vagrant_goodhosts`.
+The command path is printed when there are errors with Vagrant, check the output marked in red.
 
 For Ubuntu and most Linux environments:
 
-    %sudo ALL=(root) NOPASSWD: [the-path]
+    %sudo ALL=(root) NOPASSWD: [the-command-path]
+
+An example complete:
+
+    %sudo ALL=(root) NOPASSWD: /home/user/sites/vvv/.vagrant/plugins/gems/3.1.2/gems/vagrant-goodhosts-1.1.6/lib/vagrant-goodhosts/bundle/cli_amd64_linux
 
 For MacOS:
 
-    %admin ALL=(root) NOPASSWD: [the-path]
+    %admin ALL=(root) NOPASSWD: [the-command-path]
 
 Replace in both %sudo/%admin with the username it if it is not working for you.
 
@@ -115,7 +120,7 @@ You have to open an elevated command prompt; hold `❖ Win` and press `X`, then 
 
     cacls %SYSTEMROOT%\system32\drivers\etc\hosts /E /G %USERNAME%:W
 
-## Installing The Development Version
+## Generate The Development Version
 
 If you would like to install `vagrant-betterhosts` to make contributions or changes, run the following commands::
 
@@ -125,3 +130,7 @@ cd vagrant-betterhosts
 ./package.sh
 vagrant plugin install vagrant-betterhosts-*.gem
 ```
+
+## Test the plugin
+
+You need to run a Vagrant machine with the minimum settings specified in the [Usage](https://github.com/goodhosts/vagrant#usage) section, it is enough a turn on and off and in the meantime if the hosts file in your machine is written in the right way.

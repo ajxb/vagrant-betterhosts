@@ -1,6 +1,8 @@
+# Action to extend for the plugin needs, detects if it was already executed etc
 module VagrantPlugins
   module BetterHosts
     module Action
+      # Extend it!
       class BaseAction
         include BetterHosts
 
@@ -35,10 +37,9 @@ module VagrantPlugins
           @app.call(env)
         end
 
-        def run(env)
+        def run(_env)
           raise NotImplementedError.new("Must be implemented!")
         end
-
       end
     end
   end

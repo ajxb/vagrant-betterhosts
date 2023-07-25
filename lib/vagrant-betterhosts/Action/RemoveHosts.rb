@@ -1,8 +1,9 @@
+# Run when is removing the hosts
 module VagrantPlugins
   module BetterHosts
     module Action
+      # Remove hosts
       class RemoveHosts < BaseAction
-
         def run(env)
           machine_action = env[:machine_action]
 
@@ -12,11 +13,9 @@ module VagrantPlugins
           if (%i[halt suspend].include? machine_action) && (false == @machine.config.goodhosts.remove_on_suspend)
             @ui.info '[vagrant-betterhosts] Removing hosts on suspend disabled'
           else
-            @ui.info '[vagrant-betterhosts] Removing hosts'
-            removeHostEntries
+            remove_host_entries
           end
         end
-
       end
     end
   end
